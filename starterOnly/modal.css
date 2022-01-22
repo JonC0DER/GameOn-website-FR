@@ -169,18 +169,35 @@ main {
   background-color: rgba(26, 39, 156, 0.4);
 }
 
+<<<<<<< HEAD
 .content {
   margin: 5% auto;
   width: 100%;
   max-width: 500px;
   animation-name: modalopen;
   animation-duration: var(--modal-duration);
+=======
+.content , .content_return{
+  margin: 5% auto;
+  width: 100%;
+  max-width: 500px;
+>>>>>>> a26252a (ajout de l'animation de fermeture du modal)
   background: #232323;
   border-radius: 10px;
   overflow: hidden;
   position: relative;
   color: #fff;
   padding-top: 10px;
+<<<<<<< HEAD
+=======
+  animation-duration: var(--modal-duration);
+}
+.content{
+  animation-name: modalopen;
+}
+.content_return{
+  animation-name: modalclose;
+>>>>>>> a26252a (ajout de l'animation de fermeture du modal)
 }
 
 .modal-body {
@@ -526,4 +543,16 @@ footer {
     opacity: 1;
   }
 }
+<<<<<<< HEAD
 
+=======
+@keyframes modalclose {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-150px);
+  }
+}
+>>>>>>> a26252a (ajout de l'animation de fermeture du modal)
