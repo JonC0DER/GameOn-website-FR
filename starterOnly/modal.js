@@ -20,4 +20,6 @@ function launchModal() {
   modalbg.style.display = "block";
 }
 
-
+function name(params) {
+  console.log(params);
+}
