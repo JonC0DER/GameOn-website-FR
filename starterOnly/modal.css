@@ -214,9 +214,15 @@ input {
   height: 48px;
 }
 /*+++++++++++++++++++++++++ ERROR INPUT */
+form .formData{
+  padding-bottom: 20px;
+  position: relative;
+}
 .formData[data-error]::after {
+  position:absolute;
   content: attr(data-error);
   font-size: 0.4em;
+  float: left;
   color: #e54858;
   display: block;
   margin-top: 7px;
@@ -232,12 +238,13 @@ input {
 .formData[data-error-visible="true"] .text-control {
   border: 2px solid #e54858;
 }
-
+/*
 input[data-error]::after {
     content: attr(data-error);
     font-size: 0.4em;
+    width: fit-content;
     color: red;
-}
+}*/
 /*+++++++++++++++++++++++++++++ CHECKBOX */
 .checkbox-label,
 .checkbox2-label {

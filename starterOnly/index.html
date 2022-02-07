@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link href="https://fonts.googleapis.com/css?family=DM+Sans" rel="stylesheet" />
   </head>
-  <body>
+  <body onload="catchResults()">
     <div class="topnav" id="myTopnav">
       <div class="header-logo">
       <img alt="logo" src="Logo.png" width="auto" height="auto" />
@@ -53,30 +53,43 @@
         <div class="content">
           <span class="close"></span>
           <div class="modal-body">
-            <form name="reserve" action="index.html" method="get" onsubmit="return validate();" >
-              <div class="formData" data-error data-error-visible="true">
+            <form name="reserve" onsubmit="return validate();" >
+              <div class="formData" 
+              data-error="Veuillez entrer 2 caractères ou plus pour le champ du Prénom." 
+              data-error-visible="false">
                 <label for="first">Prénom</label><br>
                 <input data-error="nom aw pa bon MF" class="text-control" type="text" id="first" name="first" minlength="2" /><br>
+                <span class=""></span>
               </div>
-              <div class="formData">
+              <div class="formData"
+              data-error="Veuillez entrer 2 caractères ou plus pour le champ du Nom." 
+              data-error-visible="false">
                 <label for="last">Nom</label><br>
                 <input class="text-control" type="text" id="last" name="last" /><br>
               </div>
-              <div class="formData">
+              <div class="formData"
+              data-error="Vous devez entrer adresse électronique valide."
+              data-error-visible="false">
                 <label for="email">E-mail</label><br>
                 <input class="text-control" type="email" id="email" name="email" /><br>
               </div>
-              <div class="formData">
+              <div class="formData"
+              data-error="Vous devez entrer votre date de naissance."
+              data-error-visible="false">
                 <label for="birthdate">Date de naissance</label><br>
                 <input class="text-control" type="date" id="birthdate" name="birthdate" /><br>
               </div>
-              <div class="formData">
+              <div class="formData"
+              data-error="Vous devez entrer une valeur numérique."
+              data-error-visible="false">
                 <label for="quantity">À combien de tournois GameOn avez-vous déjà participé ?</label><br>
                 <input type="number" class="text-control" id="quantity" name="quantity" min="0" max="99">
               </div>
               <p class="text-label">A quel tournoi souhaitez-vous participer cette année ?</p>
               <!-- choix de ville formulaire -->
-              <div class="formData">
+              <div class="formData"
+              data-error="Vous devez choisir une option."
+              data-error-visible="false">
                 <input class="checkbox-input" type="radio" id="location1" name="location" value="New York" />
                 <label class="checkbox-label" for="location1">
                   <span class="checkbox-icon"></span>
@@ -109,7 +122,9 @@
                 </label>
               </div>
 
-              <div class="formData">
+              <div class="formData" 
+              data-error="Vous devez vérifier que vous acceptez les termes et conditions."
+              data-error-visible="false">
                 <input class="checkbox-input" type="checkbox" id="checkbox1" checked />
                 <label class="checkbox2-label" for="checkbox1" required>
                   <span class="checkbox-icon"></span>
