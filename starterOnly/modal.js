@@ -10,18 +10,38 @@ function editNav() {
 // DOM Elements
 const modalbg = document.querySelector(".bground");
 const modalBtn = document.querySelectorAll(".modal-btn");
+const form = document.forms['reserve'];
+const formElem = form['elements'];
 const formData = document.querySelectorAll(".formData");
 const formClose = document.querySelector(".close");
-const formCoiceTown = document.querySelectorAll("input[name=location]");
-const formCheckBX = document.querySelectorAll("input[type=checkbox]");
+const successBloc = document.querySelector(".success_msg");
+const successClose = document.querySelector("button[class=btn-submit]");
 const submit = document.querySelector("input[type=submit]");
+
 // tableau contenant les valeurs du formulaire
 const formValues = new Array();
 
 // launch modal event
 modalBtn.forEach((btn) => btn.addEventListener("click", launchModal));
-formClose.addEventListener("click", closeModal);
-submit.addEventListener("click", event => {event.preventDefault()});
+// close modal
+(() => {
+  let btns = [formClose, successClose];
+  btns.forEach(
+    btn => {
+      btn.addEventListener("click", closeModal);
+    }
+  );
+})();
+
+// on click for submit formular 
+submit.addEventListener("click", waitBeforeSubmit);
+
+// stop event on click action
+function waitBeforeSubmit(event){
+  event.preventDefault();
+  validate();
+}
+
 // launch modal form
 function launchModal() {
   modalbg.style.display = "block";
@@ -33,7 +53,7 @@ function sleep(ms) {
 
 async function closeModal() {
   modalbg.children[0].className = 'content_return';
-  await sleep(810);
+  await sleep(720);
   modalbg.children[0].className = 'content';
   modalbg.style.display = "none";
 }
@@ -45,6 +65,7 @@ function formArray(newValue){
 
 // verifie si la date en est bien une et l'email également
 function checkDateOrEmail(params) {
+  let count = 0; 
   // https://www.regextester.com/99555
   // on stocke nos regexs date et email dans un array
   let regex = [
@@ -66,54 +87,71 @@ function checkDateOrEmail(params) {
       if( ( item.value != null && item.value.match(regex[1]) ) 
         || ( birthDate != null && birthDate.match(regex[0]) ) ){
         formArray(item.value);
+        cancelErrorMSG(item);
+        count ++;
       }else{
         sendErrorMSG(item);        
         formArray(null);
       }
     }
   );
+  return (count == 2 ? true : false);
 }
 
 // verifie si la valeur entrer est integer
 function checkNumber(numberTournament) { 
-  let nb = Number(numberTournament.value);
-  if(typeof nb === 'number' && isFinite(nb)){
-    formArray(nb);
+  if(numberTournament.value !== ''){
+    // console.log('numberTournament != vide : ' + numberTournament.value);
+    let nb = Number(numberTournament.value);
+    if(typeof nb === 'number' && isFinite(nb)){
+      // console.log('nb est numérique : ' + nb);
+      formArray(nb);
+      cancelErrorMSG(numberTournament);
+      return true;
+    }
+    return false;
   }else{
+    // console.log('nb est vide');
     sendErrorMSG(numberTournament);
     formArray(null);
+    return false;
   }
 }
 
 // verifie la longueur des strings prenom/nom supérieur à 2 characteres
 function checkedFirstLast(params){
-  // let count = 0;
+  let count = 0;
   params.forEach(
     item => {
-      if (item.value.length < 2){
+      // console.log('item => item.value',item,' : ',item.value);
+      if (item.value != null && item.value.length < 2){
         sendErrorMSG(item);
         formArray(null);
       }else{
         formArray(item.value);
-        //count ++;
+        cancelErrorMSG(item);
+        count ++;
       }
     }
   );
-  //if(count == 2)
-  //  return true;
+  if(count == 2)
+    return true;
 }
-// loop quel input est checked
+// verifie si un input:radio est est selectionné
 function checkTown(towns) {
   let count = 0;
   let labelBelow = null;
+  let result;
   towns.forEach(
     town => {
+      if(labelBelow == null){
+        labelBelow = town.labels[0];
+      }
       if(town.checked){
         formArray(towns.value);
+        cancelErrorMSG(labelBelow);
+        result = true;
       }else{
-        if(labelBelow == null){
-          labelBelow = town.labels[0];
-        }
         count ++;
       }
     }
@@ -121,61 +159,113 @@ function checkTown(towns) {
   if(count == towns.length){
     sendErrorMSG(labelBelow);
     formArray(null);
+    result = false;
   }
+
+  return result;
 }
+
 // condition general et prochains évenements
 function checkGeneralCondition(generalCondition, nextEvent) {
+  let ret = false;
   if (generalCondition.checked) {
     formArray(generalCondition.checked);
+    cancelErrorMSG(generalCondition.labels[0]);
+    ret = true;
   }else{
     formArray(null);
+    sendErrorMSG(generalCondition.labels[0])
   }
   if(nextEvent.checked){
     formArray(nextEvent.checked);
   }else{
     formArray(null);
   }
+  return ret;
 }
+
 // rendre visible les erreurs du formulaire
 function sendErrorMSG(elemFrom) {
   elemFrom.offsetParent.attributes["data-error-visible"].value = 'true';
 }
+// enlever les erreurs du formulaire si elles sont rectifier
+function cancelErrorMSG(elemFrom){
+  elemFrom.offsetParent.attributes["data-error-visible"].value = 'false';
+}
+// le formulaire est valider afficher un message de succès 
+// et un message de remerciments
+function successMSG() {
+  form.style.display = 'none';  
+  successBloc.style.display = 'block';
+}
+
+// check if all functions that analyse a input formular return TRUE value
+// then checkForm will return TRUE
+// or FALSE if one of those functions return FALSE
+function checkForm(){
+  let isValidate;
+  let allFuncs = [
+    checkedFirstLast( [formElem['first'], formElem['last']] ) ,
+    checkDateOrEmail( [formElem['email'], formElem['birthdate']] ),
+    checkNumber(formElem['quantity']),
+    checkTown(formElem['location']),
+    checkGeneralCondition(formElem['checkbox1'], formElem['checkbox2'])
+  ];
+  if(formValues.length == 0 && formValues instanceof Array) {  
+    allFuncs.forEach(
+      func => {
+        // console.log('function => ' + func);
+        if(func != true){
+          isValidate = false;
+          formValues.splice(0, formValues.length);
+        }
+      }
+    );
+  }else if(formValues instanceof Array && formValues.length == 8){
+    isValidate = true;
+  }
+  return isValidate;
+}
 
 function validate(){
-  const form = document.forms['reserve'];
-  const formElem = form['elements'];
-
-  checkedFirstLast( [formElem['first'], formElem['last']] ) ;
-  checkDateOrEmail( [formElem['email'], formElem['birthdate']] );
-  checkNumber(formElem['quantity']);
-  checkTown(formElem['location']);
-  checkGeneralCondition(formElem['checkbox1'], formElem['checkbox2']);
+  if(checkForm() == true){
+    successMSG();
+  }
   
   console.log( formValues );
-  sendResults(formValues);
+  //sendResults(formValues);
 }
 
 // send array with post method
-function sendResults(theArray){
-  const options = {
+// let url = 'https://jsonplaceholder.typicode.com/posts';
+// let url = `${window.origin}`;
+let url = `index.html`;
+async function sendResults(theArray){
+  let response = await fetch(url,{
+  //let request = new Request(url,{
     method: 'POST',
-    body: JSON.stringify( theArray )  
-  };
-  fetch( 'index.html', options )
-    .then( response => response.json() )
-    .catch(function(error){
-      console.log('Fetch error : ' + error);
-    })
+    cache:'no-cache',
+    mode:'same-origin',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(theArray)
+  })
+
+  // let response = await fetch(request)
+  let data = await response.json()
 }
 
-function catchResults(response){
-  if(response.status !== 200){
-    console.log('Reponse is not 200 : ' + response.status);
-    return;
-  }
-  response.json().then(
-    function (data) {
+async function catchResults(){
+  try {
+    let response = await fetch(url);
+    if (reponse.ok) {    
+      let data = await response.json();
       console.log(data);
+    }else{
+      console.error('Error response status', response.status);
     }
-  )
+  } catch (error) {
+    console.log(error);
+  }
 }
