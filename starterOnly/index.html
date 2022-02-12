@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link href="https://fonts.googleapis.com/css?family=DM+Sans" rel="stylesheet" />
   </head>
-  <body onload="catchResults()">
+  <body >
     <div class="topnav" id="myTopnav">
       <div class="header-logo">
       <img alt="logo" src="Logo.png" width="auto" height="auto" />
@@ -68,7 +68,7 @@
                 <input class="text-control" type="text" id="last" name="last" /><br>
               </div>
               <div class="formData"
-              data-error="Vous devez entrer adresse électronique valide."
+              data-error="Vous devez entrer une adresse électronique valide."
               data-error-visible="false">
                 <label for="email">E-mail</label><br>
                 <input class="text-control" type="email" id="email" name="email" /><br>
@@ -140,6 +140,15 @@
               </div>
               <input class="btn-submit" type="submit" class="button" value="C'est parti" />
             </form>
+            <div class="success_msg">
+              <div class="conainer_msg">
+                <div class="msg">
+                  <h3>Merci !</h3>
+                  <p>Votre réservation a été reçue.</p>
+                </div>
+                <button class="btn-submit">Fermer</button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
