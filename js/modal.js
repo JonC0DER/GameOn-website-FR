@@ -121,12 +121,14 @@ function checkNumber(numberTournament) {
 // verifie la longueur des strings prenom/nom supérieur à 2 characteres
 function checkedFirstLast(params){
   let count = 0;
+  let result;
   params.forEach(
     item => {
       // console.log('item => item.value',item,' : ',item.value);
       if (item.value != null && item.value.length < 2){
         sendErrorMSG(item);
         formArray(null);
+        result = false;
       }else{
         formArray(item.value);
         cancelErrorMSG(item);
@@ -134,8 +136,9 @@ function checkedFirstLast(params){
       }
     }
   );
-  if(count == 2)
-    return true;
+  if(count == 2){ result = true; }
+  
+  return result;
 }
 // verifie si un input:radio est est selectionné
 function checkTown(towns) {
@@ -204,25 +207,31 @@ function successMSG() {
 // or FALSE if one of those functions return FALSE
 function checkForm(){
   let isValidate;
-  let allFuncs = [
-    checkedFirstLast( [formElem['first'], formElem['last']] ) ,
-    checkDateOrEmail( [formElem['email'], formElem['birthdate']] ),
-    checkNumber(formElem['quantity']),
-    checkTown(formElem['location']),
-    checkGeneralCondition(formElem['checkbox1'], formElem['checkbox2'])
-  ];
+  let trueCount = 0;
   if(formValues.length == 0 && formValues instanceof Array) {  
+    let allFuncs = [
+      checkedFirstLast( [formElem['first'], formElem['last']] ) ,
+      checkDateOrEmail( [formElem['email'], formElem['birthdate']] ),
+      checkNumber(formElem['quantity']),
+      checkTown(formElem['location']),
+      checkGeneralCondition(formElem['checkbox1'], formElem['checkbox2'])
+    ];
     allFuncs.forEach(
       func => {
-        // console.log('function => ' + func);
+        console.log('function => ' + func);
         if(func != true){
           isValidate = false;
           formValues.splice(0, formValues.length);
+        }else{
+          trueCount ++;
         }
       }
     );
-  }else if(formValues instanceof Array && formValues.length == 8){
-    isValidate = true;
+    if (trueCount == allFuncs.length) {
+      isValidate = true;
+    }
+  }else{
+    isValidate = false;
   }
   return isValidate;
 }
