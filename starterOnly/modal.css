@@ -14,7 +14,7 @@ body {
   margin: 0;
   display: flex;
   flex-direction: column;
-  background-image: url("background.png");
+  /*background-image: url("background.png");*/
   font-family: var(--font-default);
   font-size: 18px;
   max-width: 1300px;
@@ -245,6 +245,22 @@ input[data-error]::after {
     width: fit-content;
     color: red;
 }*/
+/*++++++++++++++++++++++++++++++ message de success */
+.success_msg{
+  display: none;
+  padding:20px;
+}
+.success_msg .container_msg{
+  display:flex;
+  height:fit-content;
+}
+.success_msg .msg{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 500px;
+  text-align: center;
+}
 /*+++++++++++++++++++++++++++++ CHECKBOX */
 .checkbox-label,
 .checkbox2-label {
