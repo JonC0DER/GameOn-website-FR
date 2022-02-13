@@ -9,12 +9,13 @@ function editNav() {
 
 // DOM Elements
 const modalbg = document.querySelector(".bground");
+const modalbody = document.querySelector(".modal-body");
 const modalBtn = document.querySelectorAll(".modal-btn");
 const form = document.forms['reserve'];
 const formElem = form['elements'];
 const formData = document.querySelectorAll(".formData");
 const formClose = document.querySelector(".close");
-const successBloc = document.querySelector(".success_msg");
+const successBloc = document.querySelector(".success-msg");
 const successClose = document.querySelector("button[class=btn-submit]");
 const submit = document.querySelector("input[type=submit]");
 
@@ -32,6 +33,43 @@ modalBtn.forEach((btn) => btn.addEventListener("click", launchModal));
     }
   );
 })();
+
+// écoute les changements de tous les inputs
+function checkInputsChange(){
+// liste des inputs du formulaire
+  const allInput = [
+    formElem['first'], formElem['last'], formElem['email'], formElem['birthdate'],
+    formElem['quantity'], formElem['location'], formElem['checkbox1']
+  ];
+  for (let i = 0; i < allInput.length; i++) {
+    let allI = allInput[i];
+
+    switch (i) {
+      case 0:
+      case 1:
+        allI.addEventListener('focusout', () => checkFirstLast([,allI]));
+        break;
+      case 2:
+      case 3:
+        allI.addEventListener('focusout', () => checkDateOrEmail([,allI]));
+        break;
+      case 4:
+        allI.addEventListener('focusout', () => checkNumber(allI));
+        break;
+      case 5:
+        allI.forEach( loc => {
+          loc.addEventListener( 'change', () => checkTown(allI) ) 
+        });
+        break;
+      case 6:
+        allI.addEventListener('change', () => checkGeneralCondition(allI));
+        break;
+      default:
+        throw "Error eventListener on input";
+        break;
+    }
+  }
+}
 
 // on click for submit formular 
 submit.addEventListener("click", waitBeforeSubmit);
@@ -52,11 +90,34 @@ function sleep(ms) {
 }
 
 async function closeModal() {
-  modalbg.children[0].className = 'content_return';
+  modalbg.children[0].className = 'content-return';
   await sleep(720);
   modalbg.children[0].className = 'content';
   modalbg.style.display = "none";
 }
+// le formulaire est valider afficher un message de succès 
+// et un message de remerciments
+async function successMSG() {
+  form.className = "success-anim-form";
+  await sleep(720);
+  form.style.display = 'none';  
+  form.className = "";
+  successBloc.style.display = 'block';
+  successBloc.className += ' success-anim-msg';
+  modalbody.className += ' modal-body-anim';
+  await sleep(722);
+  modalbody.className = 'modal-body';
+  successBloc.className = 'success-msg';
+}
+// rendre visible les erreurs du formulaire
+function sendErrorMSG(elemFrom) {
+  elemFrom.offsetParent.attributes["data-error-visible"].value = 'true';
+}
+// enlever les erreurs du formulaire si elles sont rectifier
+function cancelErrorMSG(elemFrom){
+  elemFrom.offsetParent.attributes["data-error-visible"].value = 'false';
+}
+
 // mise à jour du tableau des valeurs formulaire
 function formArray(newValue){
   formValues.push(newValue);
@@ -119,7 +180,7 @@ function checkNumber(numberTournament) {
 }
 
 // verifie la longueur des strings prenom/nom supérieur à 2 characteres
-function checkedFirstLast(params){
+function checkFirstLast(params){
   let count = 0;
   let result;
   params.forEach(
@@ -169,7 +230,7 @@ function checkTown(towns) {
 }
 
 // condition general et prochains évenements
-function checkGeneralCondition(generalCondition, nextEvent) {
+function checkGeneralCondition(generalCondition, nextEvent = null) {
   let ret = false;
   if (generalCondition.checked) {
     formArray(generalCondition.checked);
@@ -179,27 +240,12 @@ function checkGeneralCondition(generalCondition, nextEvent) {
     formArray(null);
     sendErrorMSG(generalCondition.labels[0])
   }
-  if(nextEvent.checked){
+  if(nextEvent != null && nextEvent.checked){
     formArray(nextEvent.checked);
   }else{
     formArray(null);
   }
   return ret;
-}
-
-// rendre visible les erreurs du formulaire
-function sendErrorMSG(elemFrom) {
-  elemFrom.offsetParent.attributes["data-error-visible"].value = 'true';
-}
-// enlever les erreurs du formulaire si elles sont rectifier
-function cancelErrorMSG(elemFrom){
-  elemFrom.offsetParent.attributes["data-error-visible"].value = 'false';
-}
-// le formulaire est valider afficher un message de succès 
-// et un message de remerciments
-function successMSG() {
-  form.style.display = 'none';  
-  successBloc.style.display = 'block';
 }
 
 // check if all functions that analyse a input formular return TRUE value
@@ -210,7 +256,7 @@ function checkForm(){
   let trueCount = 0;
   if(formValues.length == 0 && formValues instanceof Array) {  
     let allFuncs = [
-      checkedFirstLast( [formElem['first'], formElem['last']] ) ,
+      checkFirstLast( [formElem['first'], formElem['last']] ) ,
       checkDateOrEmail( [formElem['email'], formElem['birthdate']] ),
       checkNumber(formElem['quantity']),
       checkTown(formElem['location']),
@@ -237,8 +283,15 @@ function checkForm(){
 }
 
 function validate(){
+  // 8 est le nombres de valeurs final que l'on doit 
+  // avoir dans l'array fromValues
+  if (formValues.length > 8 || formValues.length < 8) {
+    formValues.splice(0, formValues.length);
+  }
   if(checkForm() == true){
     successMSG();
+  }else{
+    checkInputsChange();
   }
   
   console.log( formValues );
