@@ -170,7 +170,7 @@ main {
   background-color: rgba(26, 39, 156, 0.4);
 }
 
-.content , .content_return{
+.content , .content-return{
   margin: 5% auto;
   width: 100%;
   max-width: 500px;
@@ -185,13 +185,17 @@ main {
 .content{
   animation-name: modalopen;
 }
-.content_return{
+.content-return{
   animation-name: modalclose;
 }
 
 .modal-body {
   padding: 15px 8%;
   margin: 15px auto;
+}
+.modal-body-anim{
+  animation-name: modalbodyheight;
+  animation-duration: var(--modal-duration);
 }
 
 label {
@@ -247,20 +251,29 @@ input[data-error]::after {
     color: red;
 }*/
 /*++++++++++++++++++++++++++++++ message de success */
-.success_msg{
+.success-msg{
   display: none;
   padding:20px;
 }
-.success_msg .container_msg{
+.success-msg .container-msg{
   display:flex;
   height:fit-content;
 }
-.success_msg .msg{
+.success-msg .msg{
   display: flex;
   flex-direction: column;
   justify-content: center;
   height: 500px;
   text-align: center;
+}
+/*+++++++++ success animation */
+.success-anim-form{
+  animation-name: modalclose;
+  animation-duration: var(--modal-duration);
+}
+.success-anim-msg{
+  animation-name: modalopen;
+  animation-duration: var(--modal-duration);
 }
 /*+++++++++++++++++++++++++++++ CHECKBOX */
 .checkbox-label,
@@ -564,5 +577,13 @@ footer {
   to {
     opacity: 0;
     transform: translateY(-150px);
+  }
+}
+@keyframes modalbodyheight {
+  from {
+    height:817px;
+  }
+  to {
+    height:612px;
   }
 }
