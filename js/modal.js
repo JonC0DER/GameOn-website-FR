@@ -184,13 +184,14 @@ function checkFirstLast(params){
   params.forEach(
     item => {
       // on enlève les espaces
+      item.value = item.value.trim().split(' ').join('');
       let name = item.value.trim();
       // si la chaine contient des charactères numériques
       // elle retourne null si il n'y en à aucun, sinon un Array
       let isNum = name.match(/[0-9]/g);
       // si la chaine contient des charactères spéciaux
       let isSpecial = name.match(/[^\w\s]/gi);
-      console.log('name => isnum ',name,' : ',isNum);
+      // console.log('name => isnum ',name,' : ',isNum);
       if((name == null || name == "")||(name.length < 2 || isNum != null || isSpecial != null)){
         sendErrorMSG(item);
         formArray(null);
