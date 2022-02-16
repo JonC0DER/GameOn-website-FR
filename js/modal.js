@@ -160,20 +160,18 @@ function checkDateOrEmail(params) {
 }
 
 // verifie si la valeur entrer est integer
-function checkNumber(numberTournament) { 
-  if(numberTournament.value !== ''){
-    // console.log('numberTournament != vide : ' + numberTournament.value);
-    let nb = Number(numberTournament.value);
-    if(typeof nb === 'number' && isFinite(nb)){
-      // console.log('nb est numérique : ' + nb);
-      formArray(nb);
-      cancelErrorMSG(numberTournament);
-      return true;
-    }
-    return false;
+function checkNumber(nbTournament) { 
+  let nb = Number(nbTournament.value);
+  let isNum = (typeof nb === 'number' && isFinite(nb));
+  // console.log('numberTournament != vide : ' + numberTournament.value);
+  if(nbTournament.value !== '' && isNum && nb >= 0){
+    // console.log('nb est numérique : ' + nb);
+    formArray(nb);
+    cancelErrorMSG(nbTournament);
+    return true;
   }else{
     // console.log('nb est vide');
-    sendErrorMSG(numberTournament);
+    sendErrorMSG(nbTournament);
     formArray(null);
     return false;
   }
@@ -185,13 +183,20 @@ function checkFirstLast(params){
   let result;
   params.forEach(
     item => {
-      // console.log('item => item.value',item,' : ',item.value);
-      if (item.value != null && item.value.length < 2){
+      // on enlève les espaces
+      let name = item.value.trim();
+      // si la chaine contient des charactères numériques
+      // elle retourne null si il n'y en à aucun, sinon un Array
+      let isNum = name.match(/[0-9]/g);
+      // si la chaine contient des charactères spéciaux
+      let isSpecial = name.match(/[^\w\s]/gi);
+      console.log('name => isnum ',name,' : ',isNum);
+      if((name == null || name == "")||(name.length < 2 || isNum != null || isSpecial != null)){
         sendErrorMSG(item);
         formArray(null);
         result = false;
       }else{
-        formArray(item.value);
+        formArray(name);
         cancelErrorMSG(item);
         count ++;
       }
@@ -264,7 +269,7 @@ function checkForm(){
     ];
     allFuncs.forEach(
       func => {
-        console.log('function => ' + func);
+        // console.log('function => ' + func);
         if(func != true){
           isValidate = false;
           formValues.splice(0, formValues.length);
