@@ -184,7 +184,7 @@ function checkFirstLast(params){
   params.forEach(
     item => {
       // on enlève les espaces
-      item.value = item.value.trim().split(' ').join('');
+      item.value = item.value.trim().replace(/ +(?= )/g,'');
       let name = item.value.trim();
       // si la chaine contient des charactères numériques
       // elle retourne null si il n'y en à aucun, sinon un Array
