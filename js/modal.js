@@ -94,6 +94,8 @@ async function closeModal() {
   await sleep(720);
   modalbg.children[0].className = 'content';
   modalbg.style.display = "none";
+  successBloc.style.display = 'none';
+  form.style.display = 'block';  
 }
 // le formulaire est valider afficher un message de succès 
 // et un message de remerciments
@@ -135,18 +137,24 @@ function checkDateOrEmail(params) {
   ];
   params.forEach(
     item => {
+      let today = new Date();
       let dateTest = new Date(item.value);
-      let birthDate = null;
+      let birthStr = null;
+      let minAge = null;
       // renvoi true si dateTest est bien de type Date
       if(dateTest instanceof Date && !isNaN(dateTest.valueOf())){
         // inverse les valeur de la date que l'on à spliter dans un array
         // et join les valeurs avec des slaches /
         if(item.value != null){
-          birthDate = item.value.split('-').reverse().join('/');
+          birthStr = item.value.split('-').reverse().join('/');
+          let birthDate = new Date(birthStr);
+          // âge minimum 13 ans
+          console.log('today: '+today.getFullYear()+' birth: '+birthDate.getFullYear());
+          minAge = today.getFullYear() - birthDate.getFullYear() >= 13;
         }
       }
       if( ( item.value != null && item.value.match(regex[1]) ) 
-        || ( birthDate != null && birthDate.match(regex[0]) ) ){
+        || ( birthStr != null && minAge && birthStr.match(regex[0]) ) ){
         formArray(item.value);
         cancelErrorMSG(item);
         count ++;
